@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Postresitos Ady - Cotizador</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Encabezado -->
+    <header class="header">
+        <div class="container text-center">
+            <h1>🍰 Postresitos Ady</h1>
+            <p>Cotizador de ingredientes</p>
+        </div>
+    </header>
+
+
+    <main class="container py-4">
+
+        <!-- Título y botón -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Mis productos</h2>
+                <p class="text-muted mb-0">
+                    Haz clic en un producto para indicar la cantidad.
+                </p>
+            </div>
+
+            <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                +
+            </button>
+        </div>
+
+
+        <!-- Aquí aparecerán los productos -->
+        <div id="listaProductos" class="row g-3">
+        </div>
+
+
+        <!-- Mensaje cuando no hay productos -->
+        <div id="mensajeVacio" class="text-center py-5">
+            <div class="empty-icon">🧁</div>
+            <h4>Aún no tienes productos</h4>
+            <p class="text-muted">
+                Presiona el botón + para agregar un ingrediente.
+            </p>
+        </div>
+
+
+        <!-- Total -->
+        <div class="total-card mt-4">
+            <div>
+                <span class="total-label">Total</span>
+                <small> Costo de los ingredientes utilizados</small>
+            </div>
+
+            <span id="total">$0.00</span>
+        </div>
+
+    </main>
+
+
+    <!-- Modal para agregar producto -->
+    <div class="modal fade" id="modalProducto" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar producto</h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="nombreProducto" class="form-label">
+                            Nombre del producto
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombreProducto"
+                            class="form-control"
+                            placeholder="Ej. Harina"
+                        >
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="unidadProducto" class="form-label">
+                            Unidad
+                        </label>
+
+                        <select id="unidadProducto" class="form-select">
+                            <option value="g">Gramos (g)</option>
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="ml">Mililitros (ml)</option>
+                            <option value="l">Litros (L)</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="precioProducto" class="form-label">
+                            Precio por unidad
+                        </label>
+
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+
+                            <input
+                                type="number"
+                                id="precioProducto"
+                                class="form-control"
+                                placeholder="Ej. 35.50"
+                                min="0"
+                                step="0.01"
+                            >
+                        </div>
+
+                        <small class="text-muted">
+                            Ejemplo: si 1 kg de harina cuesta $30,
+                            selecciona kg y escribe 30.
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-save"
+                            onclick="agregarProducto()">
+                        Agregar producto
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal para introducir cantidad -->
+    <div class="modal fade" id="modalCantidad" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloCantidad">
+                        Cantidad utilizada
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+
+                    <p class="text-muted">
+                        Introduce la cantidad que utilizaste de este producto.
+                    </p>
+
+                    <div class="input-group input-group-lg">
+
+                        <input
+                            type="number"
+                            id="cantidadProducto"
+                            class="form-control"
+                            min="0"
+                            step="0.01"
+                            placeholder="Ej. 250"
+                        >
+
+                        <span
+                            class="input-group-text"
+                            id="unidadCantidad">
+                            g
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-save"
+                        onclick="guardarCantidad()">
+                        Guardar cantidad
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="package.js"></script>
+
+</body>
+</html>
+

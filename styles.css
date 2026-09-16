@@ -1,0 +1,266 @@
+
+/* ------------------------------
+   ESTILOS GENERALES
+--------------------------------*/
+
+body {
+    background: #fff8f5;
+    font-family: Arial, sans-serif;
+    color: #4a3632;
+}
+
+
+/* ------------------------------
+   ENCABEZADO
+--------------------------------*/
+
+.header {
+    background: linear-gradient(135deg, #e89aaa, #d97b91);
+    color: white;
+    padding: 30px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.header h1 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.header p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+
+/* ------------------------------
+   BOTÓN +
+--------------------------------*/
+
+.btn-add {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+    border: none;
+
+    background: #d97b91;
+    color: white;
+
+    font-size: 32px;
+    line-height: 1;
+
+    box-shadow: 0 5px 15px rgba(217, 123, 145, 0.35);
+
+    transition: 0.2s;
+}
+
+.btn-add:hover {
+    background: #c96680;
+    color: white;
+    transform: scale(1.08);
+}
+
+
+/* ------------------------------
+   TARJETAS DE PRODUCTOS
+--------------------------------*/
+
+.product-card {
+    background: white;
+    border: none;
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow: 0 5px 20px rgba(100, 60, 50, 0.08);
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(100, 60, 50, 0.13);
+}
+
+.product-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.product-price {
+    color: #d16f88;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.product-quantity {
+    color: #777;
+    font-size: 14px;
+}
+
+.product-cost {
+    font-size: 22px;
+    font-weight: bold;
+    color: #4a3632;
+}
+
+
+/* ------------------------------
+   BOTÓN ELIMINAR
+--------------------------------*/
+
+.btn-delete {
+    border: none;
+    background: #fff0f0;
+
+    color: #c75b5b;
+
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+
+    transition: 0.2s;
+}
+
+.btn-delete:hover {
+    background: #c75b5b;
+    color: white;
+}
+
+
+/* ------------------------------
+   TOTAL
+--------------------------------*/
+
+.total-card {
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 6px 25px rgba(100, 60, 50, 0.12);
+
+    border-left: 6px solid #d97b91;
+}
+
+.total-label {
+    display: block;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.total-card small {
+    color: #888;
+}
+
+#total {
+    font-size: 32px;
+    font-weight: bold;
+    color: #d16f88;
+}
+
+
+/* ------------------------------
+   MENSAJE VACÍO
+--------------------------------*/
+
+.empty-icon {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+#mensajeVacio h4 {
+    font-weight: bold;
+}
+
+
+/* ------------------------------
+   MODALES
+--------------------------------*/
+
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: #fff1f4;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+
+/* ------------------------------
+   INPUTS
+--------------------------------*/
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+    padding: 11px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #d97b91;
+    box-shadow: 0 0 0 0.2rem rgba(217, 123, 145, 0.15);
+}
+
+
+/* ------------------------------
+   BOTÓN GUARDAR
+--------------------------------*/
+
+.btn-save {
+    background: #d97b91;
+    color: white;
+
+    border: none;
+
+    padding: 10px 20px;
+
+    border-radius: 10px;
+}
+
+.btn-save:hover {
+    background: #c96680;
+    color: white;
+}
+
+
+/* ------------------------------
+   RESPONSIVE
+--------------------------------*/
+
+@media (max-width: 576px) {
+
+    .header {
+        padding: 25px 0;
+    }
+
+    .header h1 {
+        font-size: 27px;
+    }
+
+    .total-card {
+        padding: 18px;
+    }
+
+    #total {
+        font-size: 25px;
+    }
+
+}
+
