@@ -1,239 +1,534 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postresitos Ady | Cotizador</title>
 
-    <title>Postresitos Ady - Cotizador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #fff7fa;
+      color: #49333d;
+      font-family: Arial, sans-serif;
+    }
 
-    <!-- Nuestro CSS -->
-    <link rel="stylesheet" href="styles.css">
+    .container { max-width: 850px; }
+
+    .header {
+      background: #f6c8da;
+      border-radius: 20px;
+      padding: 28px 20px;
+      text-align: center;
+      margin: 25px 0;
+    }
+
+    .header h1 {
+      font-weight: bold;
+      color: #713e59;
+    }
+
+    .panel, .product-card {
+      background: white;
+      border: 1px solid #f0dbe5;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px #713e590d;
+    }
+
+    .product-card { cursor: pointer; }
+    .product-card:hover { border-color: #d98caf; }
+
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .product-price, .product-quantity {
+      color: #765b69;
+      margin-top: 5px;
+    }
+
+    .product-cost {
+      color: #a04470;
+      font-size: 1.15rem;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background: #b85d87;
+      border-color: #b85d87;
+    }
+
+    .btn-primary:hover {
+      background: #964569;
+      border-color: #964569;
+    }
+
+    .total-box {
+      background: #f6c8da;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      position: sticky;
+      bottom: 10px;
+    }
+
+    .total-box h2 {
+      color: #713e59;
+      font-weight: bold;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px 10px;
+      color: #896e7c;
+    }
+  </style>
 </head>
 
 <body>
+  <main class="container pb-4">
 
-    <!-- Encabezado -->
     <header class="header">
-        <div class="container text-center">
-            <h1>🍰 Postresitos Ady</h1>
-            <p>Cotizador de ingredientes</p>
-        </div>
+      <h1>🍰 Postresitos Ady</h1>
+      <p class="mb-0">Cotizador de ingredientes</p>
     </header>
 
-
-    <main class="container py-4">
-
-        <!-- Título y botón -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2>Mis productos</h2>
-                <p class="text-muted mb-0">
-                    Haz clic en un producto para indicar la cantidad.
-                </p>
-            </div>
-
-            <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#modalProducto">
-                +
-            </button>
+    <section class="panel">
+      <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+        <div>
+          <h4>Mis ingredientes</h4>
+          <p class="text-secondary mb-0">Agrega precios y calcula cuánto utilizas.</p>
         </div>
+        <button class="btn btn-primary" data-bs-toggle="modal"
+          data-bs-target="#modalProducto">
+          + Agregar producto
+        </button>
+      </div>
+    </section>
 
-
-        <!-- Aquí aparecerán los productos -->
-        <div id="listaProductos" class="row g-3">
-        </div>
-
-
-        <!-- Mensaje cuando no hay productos -->
-        <div id="mensajeVacio" class="text-center py-5">
-            <div class="empty-icon">🧁</div>
-            <h4>Aún no tienes productos</h4>
-            <p class="text-muted">
-                Presiona el botón + para agregar un ingrediente.
-            </p>
-        </div>
-
-
-        <!-- Total -->
-        <div class="total-card mt-4">
-            <div>
-                <span class="total-label">Total</span>
-                <small> Costo de los ingredientes utilizados</small>
-            </div>
-
-            <span id="total">$0.00</span>
-        </div>
-
-    </main>
-
-
-    <!-- Modal para agregar producto -->
-    <div class="modal fade" id="modalProducto" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar producto</h5>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-                <div class="modal-body">
-
-                    <div class="mb-3">
-                        <label for="nombreProducto" class="form-label">
-                            Nombre del producto
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nombreProducto"
-                            class="form-control"
-                            placeholder="Ej. Harina"
-                        >
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label for="unidadProducto" class="form-label">
-                            Unidad
-                        </label>
-
-                        <select id="unidadProducto" class="form-select">
-                            <option value="g">Gramos (g)</option>
-                            <option value="kg">Kilogramos (kg)</option>
-                            <option value="ml">Mililitros (ml)</option>
-                            <option value="l">Litros (L)</option>
-                        </select>
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label for="precioProducto" class="form-label">
-                            Precio por unidad
-                        </label>
-
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-
-                            <input
-                                type="number"
-                                id="precioProducto"
-                                class="form-control"
-                                placeholder="Ej. 35.50"
-                                min="0"
-                                step="0.01"
-                            >
-                        </div>
-
-                        <small class="text-muted">
-                            Ejemplo: si 1 kg de harina cuesta $30,
-                            selecciona kg y escribe 30.
-                        </small>
-                    </div>
-
-                </div>
-
-
-                <div class="modal-footer">
-
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-
-                    <button type="button"
-                            class="btn btn-save"
-                            onclick="agregarProducto()">
-                        Agregar producto
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
+    <div id="estado" class="text-center mb-3 text-secondary">
+      Cargando productos...
     </div>
 
+    <section id="listaProductos"></section>
 
-    <!-- Modal para introducir cantidad -->
-    <div class="modal fade" id="modalCantidad" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tituloCantidad">
-                        Cantidad utilizada
-                    </h5>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-
-                <div class="modal-body">
-
-                    <p class="text-muted">
-                        Introduce la cantidad que utilizaste de este producto.
-                    </p>
-
-                    <div class="input-group input-group-lg">
-
-                        <input
-                            type="number"
-                            id="cantidadProducto"
-                            class="form-control"
-                            min="0"
-                            step="0.01"
-                            placeholder="Ej. 250"
-                        >
-
-                        <span
-                            class="input-group-text"
-                            id="unidadCantidad">
-                            g
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="modal-footer">
-
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-save"
-                        onclick="guardarCantidad()">
-                        Guardar cantidad
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
+    <div id="mensajeVacio" class="empty" hidden>
+      <h5>Aún no tienes ingredientes 🧁</h5>
+      <p>Agrega el primero para comenzar a cotizar.</p>
     </div>
 
+    <section class="total-box mt-4">
+      <p class="mb-1">Costo total de los ingredientes utilizados</p>
+      <h2 id="total">$0.00</h2>
+      <button class="btn btn-light btn-sm" onclick="limpiarCantidades()">
+        Reiniciar cantidades
+      </button>
+    </section>
+  </main>
 
+  <!-- Agregar producto -->
+  <div class="modal fade" id="modalProducto" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo ingrediente</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="modal-body">
+          <label class="form-label">Nombre</label>
+          <input id="nombreProducto" class="form-control mb-3"
+            placeholder="Ej. Harina">
 
-    <script src="package.js"></script>
+          <label class="form-label">Unidad en la que compras</label>
+          <select id="unidadProducto" class="form-select mb-3">
+            <option value="kg">Kilogramos (kg)</option>
+            <option value="g">Gramos (g)</option>
+            <option value="l">Litros (L)</option>
+            <option value="ml">Mililitros (ml)</option>
+          </select>
 
+          <label class="form-label">Precio de esa cantidad (MXN)</label>
+          <input id="precioProducto" class="form-control"
+            type="number" min="0.01" step="0.01" placeholder="Ej. 35.50">
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-primary" onclick="agregarProducto()">
+            Guardar producto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registrar cantidad utilizada -->
+  <div class="modal fade" id="modalCantidad" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tituloCantidad">Cantidad utilizada</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <label class="form-label">¿Cuánto utilizaste?</label>
+          <div class="input-group">
+            <input id="cantidadProducto" type="number" min="0" step="any"
+              class="form-control" placeholder="Ej. 250">
+            <select id="unidadCantidad" class="form-select">
+              <option value="g">Gramos (g)</option>
+              <option value="kg">Kilogramos (kg)</option>
+              <option value="ml">Mililitros (ml)</option>
+              <option value="l">Litros (L)</option>
+            </select>
+          </div>
+          <p class="text-secondary small mt-2">
+            El costo se calcula automáticamente según la unidad de compra.
+          </p>
+          <div id="errorCantidad" class="text-danger small"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-primary" onclick="guardarCantidad()">
+            Calcular
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // PEGA AQUÍ LOS DATOS DE TU PROYECTO SUPABASE
+    const SUPABASE_URL = "https://gptaqxoeztqwxgjegnbf.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_TTaAufosLbhWJi10QVaQvw_I31rGQGZ";
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let productos = [];
+    let productoSeleccionado = null;
+    let cantidades = JSON.parse(
+      localStorage.getItem("postresitos_cantidades") || "{}"
+    );
+
+    const modalProducto = new bootstrap.Modal(
+      document.getElementById("modalProducto")
+    );
+    const modalCantidad = new bootstrap.Modal(
+      document.getElementById("modalCantidad")
+    );
+
+    const unidades = {
+      g:  { tipo: "masa", factor: 1 },
+      kg: { tipo: "masa", factor: 1000 },
+      ml: { tipo: "volumen", factor: 1 },
+      l:  { tipo: "volumen", factor: 1000 }
+    };
+
+    const dinero = valor =>
+      new Intl.NumberFormat("es-MX", {
+        style: "currency",
+        currency: "MXN"
+      }).format(valor);
+
+    function convertirCosto(cantidad, unidadUso, producto) {
+      const uso = unidades[unidadUso];
+      const compra = unidades[producto.unidad];
+
+      if (!uso || !compra || uso.tipo !== compra.tipo) return null;
+
+      // Convierte la cantidad utilizada a la unidad de compra.
+      const cantidadConvertida = cantidad * uso.factor / compra.factor;
+      return cantidadConvertida * Number(producto.precio);
+    }
+
+    function guardarCantidadesLocalmente() {
+      localStorage.setItem(
+        "postresitos_cantidades",
+        JSON.stringify(cantidades)
+      );
+    }
+
+    async function cargarProductos() {
+      const estado = document.getElementById("estado");
+      estado.textContent = "Cargando productos...";
+
+      const { data, error } = await db
+        .from("productos")
+        .select("id, nombre, unidad, precio")
+        .order("nombre");
+
+      if (error) {
+        estado.textContent =
+          "No se pudieron cargar los productos. Revisa la conexión con Supabase y sus permisos.";
+        console.error(error);
+        return;
+      }
+
+      productos = data || [];
+
+      // Elimina cantidades locales de productos que ya no existen.
+      const ids = new Set(productos.map(p => String(p.id)));
+      for (const id of Object.keys(cantidades)) {
+        if (!ids.has(id)) delete cantidades[id];
+      }
+      guardarCantidadesLocalmente();
+
+      estado.textContent = "";
+      mostrarProductos();
+    }
+
+    async function agregarProducto() {
+      const nombre = document.getElementById("nombreProducto")
+        .value.trim();
+      const unidad = document.getElementById("unidadProducto").value;
+      const precio = Number(
+        document.getElementById("precioProducto").value
+      );
+
+      if (!nombre || !Number.isFinite(precio) || precio <= 0) {
+        alert("Escribe el nombre y un precio válido mayor que cero.");
+        return;
+      }
+
+      const boton = document.querySelector(
+        "#modalProducto .modal-footer .btn-primary"
+      );
+      boton.disabled = true;
+
+      const { error } = await db.from("productos").insert({
+        nombre,
+        unidad,
+        precio
+      });
+
+      boton.disabled = false;
+
+      if (error) {
+        alert("No se pudo guardar el producto. Revisa Supabase y sus permisos.");
+        console.error(error);
+        return;
+      }
+
+      document.getElementById("nombreProducto").value = "";
+      document.getElementById("precioProducto").value = "";
+      modalProducto.hide();
+
+      await cargarProductos();
+    }
+
+    function mostrarProductos() {
+      const lista = document.getElementById("listaProductos");
+      lista.innerHTML = "";
+
+      document.getElementById("mensajeVacio").hidden =
+        productos.length > 0;
+
+      productos.forEach(producto => {
+        const guardado = cantidades[String(producto.id)] || {
+          cantidad: 0,
+          unidad: producto.unidad
+        };
+
+        const costo = convertirCosto(
+          Number(guardado.cantidad) || 0,
+          guardado.unidad,
+          producto
+        );
+
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "product-card";
+
+        const info = document.createElement("div");
+        info.className = "d-flex justify-content-between gap-3";
+
+        const izquierda = document.createElement("div");
+        izquierda.className = "flex-grow-1";
+
+        const nombre = document.createElement("div");
+        nombre.className = "product-name";
+        nombre.textContent = producto.nombre;
+
+        const precio = document.createElement("div");
+        precio.className = "product-price";
+        precio.textContent =
+          `${dinero(producto.precio)} por ${producto.unidad}`;
+
+        const cantidad = document.createElement("div");
+        cantidad.className = "product-quantity";
+        cantidad.textContent =
+          `Utilizado: ${guardado.cantidad || 0} ${guardado.unidad}`;
+
+        const costoTexto = document.createElement("div");
+        costoTexto.className = "product-cost";
+        costoTexto.textContent = `Costo: ${dinero(costo ?? 0)}`;
+
+        izquierda.append(nombre, precio, cantidad, costoTexto);
+
+        const derecha = document.createElement("div");
+        derecha.className = "d-flex flex-column gap-2";
+
+        const botonCantidad = document.createElement("button");
+        botonCantidad.className = "btn btn-primary btn-sm";
+        botonCantidad.textContent = "Cantidad";
+        botonCantidad.addEventListener("click", event => {
+          event.stopPropagation();
+          seleccionarProducto(producto.id);
+        });
+
+        const botonEliminar = document.createElement("button");
+        botonEliminar.className = "btn btn-outline-danger btn-sm";
+        botonEliminar.textContent = "Eliminar";
+        botonEliminar.addEventListener("click", event => {
+          event.stopPropagation();
+          eliminarProducto(producto.id);
+        });
+
+        derecha.append(botonCantidad, botonEliminar);
+        info.append(izquierda, derecha);
+        tarjeta.append(info);
+
+        tarjeta.addEventListener("click", () =>
+          seleccionarProducto(producto.id)
+        );
+
+        lista.appendChild(tarjeta);
+      });
+
+      actualizarTotal();
+    }
+
+    function seleccionarProducto(id) {
+      productoSeleccionado = productos.find(
+        p => String(p.id) === String(id)
+      );
+
+      if (!productoSeleccionado) return;
+
+      const guardado = cantidades[String(id)] || {
+        cantidad: 0,
+        unidad: productoSeleccionado.unidad
+      };
+
+      document.getElementById("tituloCantidad").textContent =
+        `Cantidad utilizada: ${productoSeleccionado.nombre}`;
+
+      document.getElementById("cantidadProducto").value =
+        guardado.cantidad || "";
+
+      const selector = document.getElementById("unidadCantidad");
+      const tipoCompra = unidades[productoSeleccionado.unidad].tipo;
+
+      // No permite mezclar masa y volumen sin conocer la densidad.
+      Array.from(selector.options).forEach(opcion => {
+        opcion.disabled =
+          unidades[opcion.value].tipo !== tipoCompra;
+      });
+
+      selector.value =
+        unidades[guardado.unidad]?.tipo === tipoCompra
+          ? guardado.unidad
+          : productoSeleccionado.unidad;
+
+      document.getElementById("errorCantidad").textContent = "";
+      modalCantidad.show();
+    }
+
+    function guardarCantidad() {
+      if (!productoSeleccionado) return;
+
+      const cantidad = Number(
+        document.getElementById("cantidadProducto").value
+      );
+      const unidad = document.getElementById("unidadCantidad").value;
+
+      if (!Number.isFinite(cantidad) || cantidad < 0) {
+        document.getElementById("errorCantidad").textContent =
+          "Introduce una cantidad válida, igual o mayor que cero.";
+        return;
+      }
+
+      if (unidades[unidad].tipo !==
+          unidades[productoSeleccionado.unidad].tipo) {
+        document.getElementById("errorCantidad").textContent =
+          "No se pueden convertir gramos a mililitros sin conocer la densidad.";
+        return;
+      }
+
+      cantidades[String(productoSeleccionado.id)] = {
+        cantidad,
+        unidad
+      };
+
+      guardarCantidadesLocalmente();
+      modalCantidad.hide();
+      mostrarProductos();
+    }
+
+    async function eliminarProducto(id) {
+      const producto = productos.find(
+        p => String(p.id) === String(id)
+      );
+
+      if (!producto) return;
+
+      if (!confirm(`¿Eliminar "${producto.nombre}" de la base de datos?`)) {
+        return;
+      }
+
+      const { error } = await db.from("productos").delete().eq("id", id);
+
+      if (error) {
+        alert("No se pudo eliminar. Revisa los permisos de Supabase.");
+        console.error(error);
+        return;
+      }
+
+      delete cantidades[String(id)];
+      guardarCantidadesLocalmente();
+      await cargarProductos();
+    }
+
+    function actualizarTotal() {
+      const total = productos.reduce((suma, producto) => {
+        const guardado = cantidades[String(producto.id)] || {
+          cantidad: 0,
+          unidad: producto.unidad
+        };
+
+        return suma + (
+          convertirCosto(
+            Number(guardado.cantidad) || 0,
+            guardado.unidad,
+            producto
+          ) ?? 0
+        );
+      }, 0);
+
+      document.getElementById("total").textContent = dinero(total);
+    }
+
+    function limpiarCantidades() {
+      if (!confirm("¿Reiniciar todas las cantidades utilizadas?")) return;
+
+      cantidades = {};
+      guardarCantidadesLocalmente();
+      mostrarProductos();
+    }
+
+    cargarProductos();
+  </script>
 </body>
 </html>
+
 
