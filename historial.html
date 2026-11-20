@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Pedidos | Postresitos Ady</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #fff7fa; color: #49333d; font-family: Arial, sans-serif; }
+    .container { max-width: 850px; }
+    .card-pedido { background: #fff; border: 1px solid #f0dbe5; border-radius: 16px; padding: 18px; margin-bottom: 15px; }
+    .btn-primary { background: #b85d87; border-color: #b85d87; }
+    .btn-primary:hover { background: #964569; border-color: #964569; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand bg-white border-bottom px-3 mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold" style="color:#713e59;" href="index.html">🍰 Postresitos Ady</a>
+      <div class="navbar-nav ms-auto gap-2">
+        <a class="nav-link" href="index.html">Cotizador</a>
+        <a class="nav-link active fw-bold" href="historial.html">Historial de pedidos</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container pb-5">
+    <h3 class="fw-bold mb-3" style="color:#713e59;">📋 Historial de Pedidos</h3>
+    <div id="listaPedidos">Cargando pedidos...</div>
+  </main>
+
+  <div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modificar Pedido</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <label class="form-label">Cliente / Descripción</label>
+          <input id="editCliente" class="form-control mb-3">
+          <label class="form-label">Ingredientes utilizados</label>
+          <div id="editIngredientes"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="guardarEdicion()">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const db = window.supabase.createClient("https://gptaqxoeztqwxgjegnbf.supabase.co", "sb_publishable_TTaAufosLbhWJi10QVaQvw_I31rGQGZ");
+    const modalEditar = new bootstrap.Modal(document.getElementById("modalEditar"));
+    let pedidos = [];
+
+    async function cargarPedidos() {
+      const { data, error } = await db.from("pedidos").select("*").order("id", { ascending: false });
+      if (error) return document.getElementById("listaPedidos").textContent = "Error: " + error.message;
+      pedidos = data || [];
+      const cont = document.getElementById("listaPedidos");
+      cont.innerHTML = pedidos.length ? "" : "<p class='text-muted'>No hay pedidos guardados.</p>";
+
+      pedidos.forEach(p => {
+        const itemsHtml = (p.detalles || []).map(d => `<li>${d.nombre}: <b>${d.cantidad} ${d.unidad}</b> ($${Number(d.costo).toFixed(2)})</li>`).join("");
+        cont.innerHTML += `
+          <div class="card-pedido">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+              <div>
+                <h5 class="fw-bold mb-0">${p.cliente}</h5>
+                <small class="text-muted">${new Date(p.creado_en).toLocaleString("es-MX")}</small>
+              </div>
+              <h5 class="fw-bold" style="color:#a04470;">Total: $${Number(p.total).toFixed(2)}</h5>
+            </div>
+            <ul class="mt-2 mb-3 small">${itemsHtml}</ul>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm" onclick="generarTicketPDF(${p.id})">📄 Ticket PDF</button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="abrirEditar(${p.id})">✏️ Modificar</button>
+              <button class="btn btn-outline-danger btn-sm" onclick="borrarPedido(${p.id})">🗑️ Borrar</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    function abrirEditar(id) {
+      const p = pedidos.find(x => x.id === id);
+      document.getElementById("editId").value = p.id;
+      document.getElementById("editCliente").value = p.cliente;
+      document.getElementById("editIngredientes").innerHTML = (p.detalles || []).map((d, i) => `
+        <div class="input-group input-group-sm mb-2">
+          <span class="input-group-text w-50">${d.nombre} (${d.unidad})</span>
+          <input type="number" step="any" class="form-control edit-cant" data-idx="${i}" value="${d.cantidad}">
+        </div>`).join("");
+      modalEditar.show();
+    }
+
+    async function guardarEdicion() {
+      const id = Number(document.getElementById("editId").value);
+      const p = pedidos.find(x => x.id === id);
+      const cliente = document.getElementById("editCliente").value.trim() || p.cliente;
+      let nuevoTotal = 0;
+
+      document.querySelectorAll(".edit-cant").forEach(inp => {
+        const idx = inp.dataset.idx;
+        const nuevaCant = Number(inp.value) || 0;
+        const factor = p.detalles[idx].cantidad > 0 ? (nuevaCant / p.detalles[idx].cantidad) : 0;
+        p.detalles[idx].cantidad = nuevaCant;
+        p.detalles[idx].costo = Number((p.detalles[idx].costo * factor).toFixed(2));
+        nuevoTotal += p.detalles[idx].costo;
+      });
+
+      await db.from("pedidos").update({ cliente, detalles: p.detalles, total: nuevoTotal }).eq("id", id);
+      modalEditar.hide();
+      cargarPedidos();
+    }
+
+    async function borrarPedido(id) {
+      if (!confirm("¿Eliminar este pedido del historial?")) return;
+      await db.from("pedidos").delete().eq("id", id);
+      cargarPedidos();
+    }
+
+    function generarTicketPDF(id) {
+      const p = pedidos.find(x => x.id === id);
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: [80, 140] });
+      let y = 12;
+
+      doc.setFontSize(13).text("POSTRESITOS ADY", 40, y, { align: "center" }); y += 6;
+      doc.setFontSize(8).text("Ticket de Pedido #" + p.id, 40, y, { align: "center" }); y += 5;
+      doc.text("Fecha: " + new Date(p.creado_en).toLocaleDateString("es-MX"), 6, y); y += 5;
+      doc.text("Pedido: " + p.cliente, 6, y); y += 4;
+      doc.text("------------------------------------------", 6, y); y += 5;
+
+      (p.detalles || []).forEach(d => {
+        doc.text(`${d.nombre} (${d.cantidad}${d.unidad})`, 6, y);
+        doc.text(`$${Number(d.costo).toFixed(2)}`, 74, y, { align: "right" });
+        y += 5;
+      });
+
+      doc.text("------------------------------------------", 6, y); y += 6;
+      doc.setFontSize(11).text(`TOTAL: $${Number(p.total).toFixed(2)}`, 74, y, { align: "right" });
+      doc.save(`Ticket_${p.cliente.replace(/\s+/g, "_")}.pdf`);
+    }
+
+    cargarPedidos();
+  </script>
+</body>
+</html>
